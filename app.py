@@ -31,12 +31,16 @@ def clean_text(text):
         "mustwatch": "excellent",
         "topnotch": "excellent",
         "masterpiece": "excellent",
+        "astonishing": "excellent",
         "outstanding": "excellent",
         "heartwarming": "beautiful",
+         "notaverage": "unique",
         "boring": "terrible",
         "disaster": "terrible",
         "awful": "terrible",
-        "worst": "terrible"
+        "worst": "terrible",
+        "plot holes": "flaws",
+        "idk": ""
     }
     tokens = [boosters.get(word, word) for word in tokens]
 
