@@ -1,3 +1,6 @@
+[![GitHub stars](https://img.shields.io/github/stars/Abhishek-0772/sentiment-analysis-nlp?style=social)](https://github.com/Abhishek-0772/sentiment-analysis-nlp/stargazers)
+
+
 # 💬 Sentiment Analysis NLP App
 
 This is a simple yet powerful web app built using **Streamlit** that performs sentiment analysis on movie or product reviews. It uses **NLP preprocessing**, **TF-IDF vectorization**, and a **Machine Learning model** to classify the sentiment as **Positive** or **Negative**.
