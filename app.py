@@ -5,8 +5,9 @@ import nltk
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 import os
+import matplotlib.pyplot as plt
 
-# NLTK data setup for Streamlit Cloud
+# NLTK data setup
 nltk_data_path = os.path.join(os.getcwd(), 'nltk_data')
 nltk.data.path.append(nltk_data_path)
 if not os.path.exists(nltk_data_path + "/corpora/stopwords"):
@@ -18,7 +19,7 @@ stop_words = set(stopwords.words("english"))
 model = pickle.load(open('model.pkl', 'rb'))
 tfidf = pickle.load(open('tfidf.pkl', 'rb'))
 
-# Text preprocessing
+# Preprocessing
 def clean_text(text):
     text = text.lower()
     text = ''.join([ch for ch in text if ch not in string.punctuation])
@@ -26,7 +27,7 @@ def clean_text(text):
     tokens = [w for w in tokens if w not in stop_words]
     return ' '.join(tokens)
 
-# Streamlit UI
+# App layout
 st.title('💬 Sentiment Analysis App')
 st.write("Enter a production/movie review below to predict if it's **Positive** or **Negative**.")
 
@@ -39,12 +40,23 @@ if st.button('Predict Sentiment'):
         cleaned = clean_text(input_text)
         vectorized = tfidf.transform([cleaned])
         prediction = model.predict(vectorized)[0]
-        probability = model.predict_proba(vectorized)[0][prediction] * 100
+        probas = model.predict_proba(vectorized)[0]
 
+        confidence = probas[prediction] * 100
+        label = "Positive" if prediction == 1 else "Negative"
+
+        # Display prediction
         if prediction == 1:
-            st.success(f"✅ Positive Review ({probability:.2f}% confidence)")
+            st.success(f"✅ Positive Review ({confidence:.2f}% confidence)")
         else:
-            st.error(f"❌ Negative Review ({probability:.2f}% confidence)")
+            st.error(f"❌ Negative Review ({confidence:.2f}% confidence)")
+
+        # 📊 Pie chart
+        st.subheader("📊 Sentiment Confidence Breakdown")
+        fig, ax = plt.subplots()
+        ax.pie(probas, labels=["Negative", "Positive"], autopct='%1.1f%%', colors=["#ff4b4b", "#00cc88"], startangle=90)
+        ax.axis("equal")
+        st.pyplot(fig)
 
 st.markdown("---")
 st.markdown("👨‍💻 Built with ❤️ by [Abhishek Sharma](https://www.linkedin.com/in/abhishekksharmma/)")
