@@ -10,7 +10,15 @@ tfidf = pickle.load(open('tfidf.pkl', 'rb'))
 
 # Preprocessing function (same as training)
 
-stop_words = set(stopwords.words('english'))
+import os
+nltk_data_path = os.path.join(os.getcwd(), 'nltk_data')
+nltk.data.path.append(nltk_data_path)
+
+if not os.path.exists(nltk_data_path + "/corpora/stopwords"):
+    nltk.download("stopwords", download_dir=nltk_data_path)
+
+
+stop_words = set(stopwords.words("english"))
 
 def clean_text(text):
     text = text.lower()
