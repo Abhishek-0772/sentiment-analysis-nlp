@@ -34,6 +34,17 @@ def clean_text(text):
     text = text.replace("idk", "")
     text = text.replace("didn't enjoy", "disliked")
     text = text.replace("did not enjoy", "disliked")
+    text = text.replace("💯", "excellent")
+    text = text.replace("meh", "boring")
+    text = text.replace("mind-blowing", "excellent")
+    text = text.replace("dragged", "boring")
+    text = text.replace("mid", "average")
+    text = text.replace("loved it", "great")
+    text = text.replace("hated it", "bad")
+    text = text.replace("10/10", "perfect")
+    text = text.replace("1/10", "awful")
+    text = text.replace("worth watching", "recommended")
+    text = text.replace("waste of time", "boring bad")
 
     # Remove punctuation
     text = ''.join([ch for ch in text if ch not in string.punctuation])
