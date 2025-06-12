@@ -23,48 +23,47 @@ tfidf = pickle.load(open('tfidf.pkl', 'rb'))
 def clean_text(text):
     text = text.lower()
 
-    # Phrase-level sentiment substitutions to help TF-IDF model
-    text = text.replace("plot holes", "flaws")
-    text = text.replace("must-watch", "excellent")
-    text = text.replace("top-notch", "excellent")
-    text = text.replace("astonishing", "excellent")
-    text = text.replace("outstanding", "excellent")
-    text = text.replace("not an average", "unique")
-    text = text.replace("not average", "unique")
-    text = text.replace("idk", "")
-    text = text.replace("didn't enjoy", "disliked")
-    text = text.replace("did not enjoy", "disliked")
-    text = text.replace("💯", "excellent")
-    text = text.replace("meh", "boring")
-    text = text.replace("mind-blowing", "excellent")
-    text = text.replace("dragged", "boring")
-    text = text.replace("mid", "average")
-    text = text.replace("loved it", "great")
-    text = text.replace("hated it", "bad")
-    text = text.replace("10/10", "perfect")
-    text = text.replace("1/10", "awful")
-    text = text.replace("worth watching", "recommended")
-    text = text.replace("waste of time", "boring bad")
+    replacements = {
+        "plot holes": "flaws",
+        "must-watch": "excellent",
+        "top-notch": "excellent",
+        "astonishing": "excellent",
+        "outstanding": "excellent",
+        "not an average": "unique",
+        "not average": "unique",
+        "idk": "",
+        "didn't enjoy": "disliked",
+        "did not enjoy": "disliked",
+        "💯": "excellent",
+        "meh": "boring",
+        "mind-blowing": "excellent",
+        "dragged": "boring",
+        "mid": "average",
+        "loved it": "great",
+        "hated it": "bad",
+        "10/10": "perfect",
+        "1/10": "awful",
+        "worth watching": "recommended",
+        "waste of time": "boring bad"
+    }
 
-    # Remove punctuation
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+
     text = ''.join([ch for ch in text if ch not in string.punctuation])
-
-    # Tokenization
     tokens = text.split()
-
-    # Remove stopwords
     tokens = [w for w in tokens if w not in stop_words]
-
     return ' '.join(tokens)
-
 
 # App UI
 st.title('💬 Sentiment Analysis App')
 st.write("Enter a product or movie review below to predict if it's **Positive** or **Negative**.")
 
-input_text = st.text_area("📝 Enter your review:")
+# Initialize input text if not present
+if 'input_text' not in st.session_state:
+    st.session_state.input_text = ""
 
-# 🔄 Sample reviews
+# Sample reviews
 with st.expander("📋 Try Sample IMDB-style Reviews"):
     sample = st.selectbox(
         "Choose a sample review:",
@@ -78,8 +77,12 @@ with st.expander("📋 Try Sample IMDB-style Reviews"):
         ]
     )
     if st.button("Use Sample Review"):
-        input_text = sample
+        st.session_state.input_text = sample
 
+# Text area (binds to session state)
+input_text = st.text_area("📝 Enter your review:", value=st.session_state.input_text)
+
+# Prediction
 if st.button('Predict Sentiment'):
     if input_text.strip() == "":
         st.warning('Please enter a review.')
@@ -90,14 +93,13 @@ if st.button('Predict Sentiment'):
         probas = model.predict_proba(vectorized)[0]
 
         confidence = probas[prediction] * 100
-        label = "Positive" if prediction == 1 else "Negative"
 
         if prediction == 1:
             st.success(f"✅ Positive Review ({confidence:.2f}% confidence)")
         else:
             st.error(f"❌ Negative Review ({confidence:.2f}% confidence)")
 
-        # 📊 Pie chart
+        # Pie chart
         st.subheader("📊 Sentiment Confidence Breakdown")
         fig, ax = plt.subplots()
         ax.pie(
@@ -110,5 +112,6 @@ if st.button('Predict Sentiment'):
         ax.axis("equal")
         st.pyplot(fig)
 
+# Footer
 st.markdown("---")
 st.markdown("👨‍💻 Built by [Abhishek Sharma](https://www.linkedin.com/in/abhishekksharmma/)")
