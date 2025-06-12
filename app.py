@@ -22,29 +22,30 @@ tfidf = pickle.load(open('tfidf.pkl', 'rb'))
 # ✅ Preprocessing with custom booster words
 def clean_text(text):
     text = text.lower()
+
+    # Phrase-level sentiment substitutions to help TF-IDF model
+    text = text.replace("plot holes", "flaws")
+    text = text.replace("must-watch", "excellent")
+    text = text.replace("top-notch", "excellent")
+    text = text.replace("astonishing", "excellent")
+    text = text.replace("outstanding", "excellent")
+    text = text.replace("not an average", "unique")
+    text = text.replace("not average", "unique")
+    text = text.replace("idk", "")
+    text = text.replace("didn't enjoy", "disliked")
+    text = text.replace("did not enjoy", "disliked")
+
+    # Remove punctuation
     text = ''.join([ch for ch in text if ch not in string.punctuation])
+
+    # Tokenization
     tokens = text.split()
+
+    # Remove stopwords
     tokens = [w for w in tokens if w not in stop_words]
 
-    # Add custom boosters for rare or strong sentiment words
-    boosters = {
-        "mustwatch": "excellent",
-        "topnotch": "excellent",
-        "masterpiece": "excellent",
-        "astonishing": "excellent",
-        "outstanding": "excellent",
-        "heartwarming": "beautiful",
-         "notaverage": "unique",
-        "boring": "terrible",
-        "disaster": "terrible",
-        "awful": "terrible",
-        "worst": "terrible",
-        "plot holes": "flaws",
-        "idk": ""
-    }
-    tokens = [boosters.get(word, word) for word in tokens]
-
     return ' '.join(tokens)
+
 
 # App UI
 st.title('💬 Sentiment Analysis App')
